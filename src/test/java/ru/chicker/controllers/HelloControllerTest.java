@@ -18,9 +18,7 @@ import ru.chicker.configs.TestAppConfig;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestAppConfig.class)
@@ -42,5 +40,12 @@ public class HelloControllerTest {
         mockMvc.perform(get("/hello"))
             .andExpect(status().isOk())
             .andExpect(forwardedUrl("/WEB-INF/views/hello.jsp"));
+    }
+
+    @Test
+    public void fooList() throws Exception {
+        mockMvc.perform(get("/foos").accept(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[0].field2").value("555"));
     }
 }

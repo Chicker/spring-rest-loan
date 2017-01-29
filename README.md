@@ -1,6 +1,7 @@
 ## How to use this project as template for a new project
 
 Some steps:
+
 * Clone template repository:
 
 ```
