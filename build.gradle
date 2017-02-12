@@ -2,7 +2,6 @@ group 'ru.chicker'
 version '0.1'
 
 apply plugin: 'war'
-apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
 
 def jacksonVersion = '2.7.0'
 def jsonPathVersion = '2.2.0'
@@ -11,6 +10,18 @@ def springBootStarterVersion = '1.5.1.RELEASE'
 
 def jUnitVersion = '4.12'
 def hamcrestVersion = '1.3'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:1.4.0'
+    }
+}
+
+apply plugin: 'org.akhikhl.gretty'
 
 repositories {
     mavenCentral()
@@ -27,14 +38,18 @@ dependencies {
     compile group:"org.springframework.boot", 
             name:"spring-boot-starter-data-jpa",
             version: springBootStarterVersion
-    compile group: 'com.h2database', name: 'h2', version: '1.4.193'    
-    
+    compile group: 'com.h2database', name: 'h2', version: '1.4.193'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version: '5.3.4.Final'
+//    compile group: 'javax.el', name: 'javax.el-api', version: '2.2.5'
+
     testCompile group: 'junit', name: 'junit',
             version: jUnitVersion
     testCompile group: 'org.hamcrest', name:'hamcrest-library',
             version: hamcrestVersion
     testCompile group: 'org.springframework', name: 'spring-test',
             version: springFrameworkVersion
+    testCompile group: 'org.glassfish.web', name: 'javax.el', version: '2.2.6'
+
 }
 
 gretty {
