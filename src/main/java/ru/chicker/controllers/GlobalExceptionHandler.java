@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.chicker.utils.ExceptionHandlersUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -22,7 +23,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handle(MethodArgumentNotValidException exception) {
-        return error(exception.getBindingResult().getFieldErrors()
+        return ExceptionHandlersUtils.error(exception.getBindingResult().getFieldErrors()
             .stream()
             .map(FieldError::getDefaultMessage)
             .collect(Collectors.toList()));
@@ -32,13 +33,9 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handle(ConstraintViolationException exception) {
-        return error(exception.getConstraintViolations()
+        return ExceptionHandlersUtils.error(exception.getConstraintViolations()
             .stream()
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.toList()));
-    }
-
-    private Map error(Object message) {
-        return Collections.singletonMap("error", message);
     }
 }

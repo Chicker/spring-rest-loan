@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
-//@Import(AppConfig.class)
+@Import({ServiceConfig.class})
 @ComponentScan(basePackages = "ru.chicker.controllers")
 @EnableWebMvc
 public class WebConfig {
