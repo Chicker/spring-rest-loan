@@ -40,6 +40,9 @@ dependencies {
             version: springBootStarterVersion
     compile group: 'com.h2database', name: 'h2', version: '1.4.193'
     compile group: 'org.hibernate', name: 'hibernate-validator', version: '5.3.4.Final'
+    compile group: "org.apache.httpcomponents", name: 'httpclient', version:
+            '4.5.2'
+    compile group: 'io.javaslang', name: 'javaslang', version: '2.0.5'
 //    compile group: 'javax.el', name: 'javax.el-api', version: '2.2.5'
 
     testCompile group: 'junit', name: 'junit',

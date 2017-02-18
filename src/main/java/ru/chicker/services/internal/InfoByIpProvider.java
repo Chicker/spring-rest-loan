@@ -1,7 +1,7 @@
 package ru.chicker.services.internal;
 
-import java.util.concurrent.TimeoutException;
+import javaslang.control.Try;
 
 public interface InfoByIpProvider {
-    String getCountryCode(String ipAddress) throws TimeoutException;
+    Try<String> getCountryCode(String ipAddress);
 }

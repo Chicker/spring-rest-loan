@@ -1,13 +1,20 @@
 package ru.chicker.services.internal;
 
-import ru.chicker.services.InfoByIpService;
+import com.jayway.jsonpath.JsonPath;
+import javaslang.control.Try;
+import ru.chicker.utils.HttpUtils;
 
-import java.util.concurrent.TimeoutException;
 
 public class InfoByIpFreeGeoIpProvider implements InfoByIpProvider {
+    private static String serviceUrl = "http://freegeoip.net/json";
+
     @Override
-    public String getCountryCode(String ipAddress) throws TimeoutException {
-        // stub
-        throw new TimeoutException("The service freegeoip.net does not accessible within timeout.");
+    public Try<String> getCountryCode(String ipAddress) {
+        String link = String.format("%s/%s", serviceUrl, ipAddress);
+
+        return HttpUtils.getHttpResponseAsString(link).map(r -> {
+            String countryCode = JsonPath.read(r, "$['country_code']");
+            return countryCode.toLowerCase();
+        });
     }
 }
