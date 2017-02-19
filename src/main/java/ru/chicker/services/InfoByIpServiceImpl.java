@@ -51,7 +51,7 @@ public class InfoByIpServiceImpl implements InfoByIpService {
             .onErrorReturn(this::falbackValueIfError)
             .first(FALLBACK_COUNTRY_CODE).blockingGet();
 
-        return countryCode;
+        return countryCode.toLowerCase();
     }
 
     private String falbackValueIfError(Throwable throwable) {

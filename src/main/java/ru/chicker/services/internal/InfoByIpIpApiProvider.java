@@ -16,7 +16,7 @@ public class InfoByIpIpApiProvider implements InfoByIpProvider {
 
         return HttpUtils.getHttpResponseAsString(link).map(r -> {
             String countryCode = JsonPath.read(r, "$['countryCode']");
-            return countryCode.toLowerCase();
+            return countryCode;
         });
     }
 }

@@ -14,7 +14,7 @@ public class InfoByIpFreeGeoIpProvider implements InfoByIpProvider {
 
         return HttpUtils.getHttpResponseAsString(link).map(r -> {
             String countryCode = JsonPath.read(r, "$['country_code']");
-            return countryCode.toLowerCase();
+            return countryCode;
         });
     }
 }
