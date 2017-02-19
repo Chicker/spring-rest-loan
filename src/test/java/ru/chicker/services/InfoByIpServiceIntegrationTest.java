@@ -62,43 +62,49 @@ public class InfoByIpServiceIntegrationTest {
     }
 
     @Test
-    public void should_return_result_from_first_service() throws Exception {
+    public void should_return_result_from_any_of_services() throws Exception {
+        when(freeGeoIpProvider.getCountryCode(anyString())).thenReturn(Try.success("ru"));
         when(freeGeoIpProvider.getCountryCode(anyString())).thenReturn(Try.success("ru"));
 
-        assertThat(infoByIpService.getCountryCode(Optional.of(anyString())), is("ru"));
-
-        verify(freeGeoIpProvider, times(1)).getCountryCode(anyString());
+        assertThat(infoByIpService.getCountryCode(Optional.of("any IP")), is("ru"));
     }
 
     @Test
     public void when_the_first_service_is_not_accessible_should_return_result_from_other_service()
     throws Exception {
+        String testApi = "83.12.21.0";
+        
         when(freeGeoIpProvider.getCountryCode(anyString())).thenReturn(Try.failure(new IOException()));
         when(infoByIpIpApiProvider.getCountryCode(anyString())).thenReturn(Try.success("ru"));
 
-        assertThat(infoByIpService.getCountryCode(Optional.of(anyString())), is("ru"));
+        assertThat(infoByIpService.getCountryCode(Optional.of(testApi)), is("ru"));
 
-        verify(freeGeoIpProvider, times(1)).getCountryCode(anyString());
-        verify(infoByIpIpApiProvider, times(1)).getCountryCode(anyString());
+        verify(freeGeoIpProvider, times(1)).getCountryCode(testApi);
+        verify(infoByIpIpApiProvider, times(1)).getCountryCode(testApi);
     }
 
     @Test
     public void when_all_services_are_not_accessible_should_return_fallback_country_code()
     throws Exception {
+        String testApi = "83.12.21.0";
+        
         when(freeGeoIpProvider.getCountryCode(anyString()))
             .thenReturn(Try.failure(new IOException()));
         when(infoByIpIpApiProvider.getCountryCode(anyString()))
             .thenReturn(Try.failure(new IOException()));
 
-        assertThat(infoByIpService.getCountryCode(Optional.of(anyString())), is("lv"));
-
-        verify(freeGeoIpProvider, times(1)).getCountryCode(anyString());
-        verify(infoByIpIpApiProvider, times(1)).getCountryCode(anyString());
+        assertThat(infoByIpService.getCountryCode(Optional.of(testApi)), is("lv"));
+        
+        verify(freeGeoIpProvider, times(1)).getCountryCode(testApi);
+        verify(infoByIpIpApiProvider, times(1)).getCountryCode(testApi);
     }
 
     @Test
     public void when_ip_address_is_not_present_should_return_fallback_country_code()
     throws Exception {
         assertThat(infoByIpService.getCountryCode(Optional.empty()), is("lv"));
+        
+        verifyZeroInteractions(freeGeoIpProvider);
+        verifyZeroInteractions(infoByIpIpApiProvider);
     }
 }

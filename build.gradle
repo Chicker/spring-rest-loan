@@ -7,6 +7,7 @@ def jacksonVersion = '2.7.0'
 def jsonPathVersion = '2.2.0'
 def springFrameworkVersion = '4.3.5.RELEASE'
 def springBootStarterVersion = '1.5.1.RELEASE'
+def rxJavaVersion = '2.0.+'
 
 def jUnitVersion = '4.12'
 def hamcrestVersion = '1.3'
@@ -43,6 +44,7 @@ dependencies {
     compile group: "org.apache.httpcomponents", name: 'httpclient', version:
             '4.5.2'
     compile group: 'io.javaslang', name: 'javaslang', version: '2.0.5'
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxJavaVersion
 //    compile group: 'javax.el', name: 'javax.el-api', version: '2.2.5'
 
     testCompile group: 'junit', name: 'junit',
