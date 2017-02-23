@@ -32,7 +32,7 @@ public final class HttpUtils {
     public static Optional<String> getClientIpAddress(HttpServletRequest request) {
         String clientIp = request.getRemoteAddr();
         
-        if (!clientIp.equals("0:0:0:0:0:0:0:1")) {
+        if (!clientIp.equals("0:0:0:0:0:0:0:1") && !clientIp.equals("127.0.0.1")) {
             return Optional.of(clientIp);
         } else {
             // if we have got loopback address, then we will try to extract the ip-address from 
