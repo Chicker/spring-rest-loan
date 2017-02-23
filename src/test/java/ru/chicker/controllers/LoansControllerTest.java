@@ -6,24 +6,35 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestServiceConfig;
+import ru.chicker.entities.LoanApplication;
+import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.ILoansService;
+import ru.chicker.services.InfoByIpService;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import java.util.Optional;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestAppConfig.class, TestServiceConfig.class})
 @WebAppConfiguration
+@Transactional
+@Rollback
 public class LoansControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -33,12 +44,22 @@ public class LoansControllerTest {
     @Autowired
     private ILoansService mockedILoansService;
 
+    @Autowired
+    private LoanApplicationRepository loanApplicationRepository;
+
+    @Autowired
+    private InfoByIpService infoByIpService;
+    
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .build();
 
         Mockito.reset(mockedILoansService);
+
+        // Common logic for the all tests. Any test can override it is
+        when(infoByIpService.getCountryCode(Optional.of(anyString()))).thenReturn("pl");
+        when(infoByIpService.getCountryCode(Optional.empty())).thenReturn("pl");
     }
 
     @Test
@@ -53,6 +74,9 @@ public class LoansControllerTest {
                 .param("surName", "Rodriges")
                 .param("personal_id", "1234bcd578"))
             .andExpect(status().isBadRequest());
+
+        // no database changes should be
+        assertThat(loanApplicationRepository.count(), is(0L));
     }
 
     @Test
@@ -97,5 +121,32 @@ public class LoansControllerTest {
             .andExpect(status().isPreconditionFailed());
 
         verify(mockedILoansService, times(1)).personalIdIsInBlackList(anyString());
+
+        // no database changes should be
+        assertThat(loanApplicationRepository.count(), is(0L));
+    }
+
+    @Test
+    public void when_loan_application_is_correct_should_save_it_to_db() throws Exception {
+        String testClientIp = "83.12.21.0";
+        String testPersonalId = "1234bcd578";
+        
+        when(infoByIpService.getCountryCode(Optional.of(testClientIp))).thenReturn("pl");
+        
+        mockMvc.perform(
+            post("/loans/new")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .header("X-Forwarded-For", testClientIp)
+                .param("amount", "1234.80")
+                .param("term", "365")
+                .param("name", "Sebastian")
+                .param("surName", "Rodriges")
+                .param("personalId", testPersonalId))
+            .andExpect(status().isCreated());
+
+        assertThat(loanApplicationRepository.count(), is(1L));
+        
+        LoanApplication loanApplication = loanApplicationRepository.findByPersonalId(testPersonalId);
+        assertThat(loanApplication.getCountryCode(), is("pl"));
     }
 }

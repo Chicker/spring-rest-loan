@@ -5,8 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.chicker.entities.LoanApplication;
 import ru.chicker.exceptions.BlockedPersonalIdException;
 import ru.chicker.models.dto.ApplicationLoanDto;
+import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.ILoansService;
 import ru.chicker.services.InfoByIpService;
 import ru.chicker.utils.ExceptionHandlersUtils;
@@ -22,10 +24,14 @@ import java.util.Optional;
 public class LoansController {
     private ILoansService loansService;
     private final InfoByIpService infoByIpService;
+    private final LoanApplicationRepository loanApplicationRepository;
 
-    public LoansController(ILoansService loansService, InfoByIpService infoByIpService) {
+    public LoansController(ILoansService loansService,
+                           InfoByIpService infoByIpService,
+                           LoanApplicationRepository loanApplicationRepository) {
         this.loansService = loansService;
         this.infoByIpService = infoByIpService;
+        this.loanApplicationRepository = loanApplicationRepository;
     }
 
     @RequestMapping(method = RequestMethod.POST,
@@ -42,6 +48,10 @@ public class LoansController {
         Optional<String> ipAddress = HttpUtils.getClientIpAddress(request);
 
         String countryCode = infoByIpService.getCountryCode(ipAddress);
+
+        LoanApplication loanApplication = new LoanApplication(applicationLoanDto, countryCode);
+        
+        loanApplicationRepository.save(loanApplication);
     }
 
     @ExceptionHandler
