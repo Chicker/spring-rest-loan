@@ -21,7 +21,7 @@ public class DataSourceConfig {
             .setScriptEncoding("UTF-8")
             .ignoreFailedDrops(true)
             .addScript("schema.sql")
-            .addScripts("blacklist_personal_ids.sql")
+            .addScripts("blacklist_personal_ids.sql", "initial_data.sql")
             .build();
         return db;
     }

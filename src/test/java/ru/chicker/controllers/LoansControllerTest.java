@@ -24,9 +24,12 @@ import ru.chicker.services.InfoByIpService;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -50,6 +53,7 @@ public class LoansControllerTest {
     @Autowired
     private InfoByIpService infoByIpService;
     
+
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
@@ -58,8 +62,7 @@ public class LoansControllerTest {
         Mockito.reset(mockedILoansService);
 
         // Common logic for the all tests. Any test can override it is
-        when(infoByIpService.getCountryCode(Optional.of(anyString()))).thenReturn("pl");
-        when(infoByIpService.getCountryCode(Optional.empty())).thenReturn("pl");
+        when(infoByIpService.getCountryCode(any())).thenReturn("pl");
     }
 
     @Test
@@ -109,7 +112,7 @@ public class LoansControllerTest {
     public void when_person_in_black_list_should_return_precondition_failed_status()
     throws Exception {
         when(mockedILoansService.personalIdIsInBlackList(anyString())).thenReturn(true);
-        
+
         mockMvc.perform(
             post("/loans/new")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -130,9 +133,9 @@ public class LoansControllerTest {
     public void when_loan_application_is_correct_should_save_it_to_db() throws Exception {
         String testClientIp = "83.12.21.0";
         String testPersonalId = "1234bcd578";
-        
+
         when(infoByIpService.getCountryCode(Optional.of(testClientIp))).thenReturn("pl");
-        
+
         mockMvc.perform(
             post("/loans/new")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -145,8 +148,28 @@ public class LoansControllerTest {
             .andExpect(status().isCreated());
 
         assertThat(loanApplicationRepository.count(), is(1L));
-        
+
         LoanApplication loanApplication = loanApplicationRepository.findByPersonalId(testPersonalId);
         assertThat(loanApplication.getCountryCode(), is("pl"));
+    }
+
+    @Test
+    public void when_limit_for_given_country_exceeded_should_return_error() throws Exception {
+        String countryCode = "pl";
+
+        when(infoByIpService.getCountryCode(any())).thenReturn(countryCode);
+        when(mockedILoansService.checkLimitAndIncrement(countryCode)).thenReturn(true);
+
+        mockMvc.perform(
+            post("/loans/new")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .header("X-Forwarded-For", "83.12.21.0")
+                .param("amount", "1234.80")
+                .param("term", "365")
+                .param("name", "Sebastian")
+                .param("surName", "Rodriges")
+                .param("personalId", "1234bcd578"))
+            .andExpect(status().isPreconditionFailed())
+            .andExpect(jsonPath("$['error']").value(containsString("for pl country")));
     }
 }

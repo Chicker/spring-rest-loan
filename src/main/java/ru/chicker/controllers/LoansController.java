@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.chicker.entities.LoanApplication;
 import ru.chicker.exceptions.BlockedPersonalIdException;
+import ru.chicker.exceptions.LimitOfRequestsExceededException;
 import ru.chicker.models.dto.ApplicationLoanDto;
 import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.ILoansService;
@@ -37,20 +38,25 @@ public class LoansController {
     @RequestMapping(method = RequestMethod.POST,
         path = "/loans/new", headers = "Content-Type=application/x-www-form-urlencoded")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createApplicationLoan(@Valid ApplicationLoanDto applicationLoanDto,
+    public void createApplicationLoan(@Valid ApplicationLoanDto appLoanDto,
                                       BindingResult bindingResult, HttpServletRequest request)
-    throws BlockedPersonalIdException {
+    throws BlockedPersonalIdException, LimitOfRequestsExceededException {
 
-        if (loansService.personalIdIsInBlackList(applicationLoanDto.getPersonalId())) {
-            throw new BlockedPersonalIdException(applicationLoanDto.getPersonalId());
+        if (loansService.personalIdIsInBlackList(appLoanDto.getPersonalId())) {
+            throw new BlockedPersonalIdException(appLoanDto.getPersonalId());
         }
 
         Optional<String> ipAddress = HttpUtils.getClientIpAddress(request);
 
         String countryCode = infoByIpService.getCountryCode(ipAddress);
 
-        LoanApplication loanApplication = new LoanApplication(applicationLoanDto, countryCode);
-        
+        if (loansService.checkLimitAndIncrement(countryCode)) {
+            // if the limit is exceeded
+            throw new LimitOfRequestsExceededException(countryCode);
+        }
+
+        LoanApplication loanApplication = new LoanApplication(appLoanDto, countryCode);
+
         loanApplicationRepository.save(loanApplication);
     }
 
@@ -58,6 +64,13 @@ public class LoansController {
     @ResponseBody
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
     public Map handleBlockedPersonalException(BlockedPersonalIdException exception) {
+        return ExceptionHandlersUtils.error(exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    public Map handleLimitOfRequestsExceededException(LimitOfRequestsExceededException exception) {
         return ExceptionHandlersUtils.error(exception.getLocalizedMessage());
     }
 

@@ -19,7 +19,9 @@ public class TestDataSourceConfig {
             .setScriptEncoding("UTF-8")
             .ignoreFailedDrops(true)
             .addScript("schema.sql")
-            .addScripts("persons_data.sql", "blacklist_personal_ids.sql")
+            .addScripts("persons_data.sql",
+                "blacklist_personal_ids.sql",
+                "initial_data_for_tests.sql")
             .build();
         return db;
     }
