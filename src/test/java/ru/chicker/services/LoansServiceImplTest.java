@@ -30,10 +30,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @WebAppConfiguration
 @Transactional
 @Rollback
-public class LoansServiceTest {
+public class LoansServiceImplTest {
 
     @Autowired
-    private ILoansService loansService;
+    private LoansService loansService;
 
     @Autowired
     private LimitOfRequestsRepository limitOfRequestsRepository;

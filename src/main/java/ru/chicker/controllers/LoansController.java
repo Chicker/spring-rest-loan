@@ -10,7 +10,7 @@ import ru.chicker.exceptions.BlockedPersonalIdException;
 import ru.chicker.exceptions.LimitOfRequestsExceededException;
 import ru.chicker.models.dto.ApplicationLoanDto;
 import ru.chicker.repositories.LoanApplicationRepository;
-import ru.chicker.services.ILoansService;
+import ru.chicker.services.LoansService;
 import ru.chicker.services.InfoByIpService;
 import ru.chicker.utils.ExceptionHandlersUtils;
 import ru.chicker.utils.HttpUtils;
@@ -23,11 +23,11 @@ import java.util.Optional;
 @Controller
 @Validated
 public class LoansController {
-    private ILoansService loansService;
+    private LoansService loansService;
     private final InfoByIpService infoByIpService;
     private final LoanApplicationRepository loanApplicationRepository;
 
-    public LoansController(ILoansService loansService,
+    public LoansController(LoansService loansService,
                            InfoByIpService infoByIpService,
                            LoanApplicationRepository loanApplicationRepository) {
         this.loansService = loansService;

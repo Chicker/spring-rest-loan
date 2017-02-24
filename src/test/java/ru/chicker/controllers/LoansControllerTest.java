@@ -18,12 +18,11 @@ import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestServiceConfig;
 import ru.chicker.entities.LoanApplication;
 import ru.chicker.repositories.LoanApplicationRepository;
-import ru.chicker.services.ILoansService;
+import ru.chicker.services.LoansService;
 import ru.chicker.services.InfoByIpService;
 
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,7 +44,7 @@ public class LoansControllerTest {
     private static MockMvc mockMvc;
 
     @Autowired
-    private ILoansService mockedILoansService;
+    private LoansService mockedLoansService;
 
     @Autowired
     private LoanApplicationRepository loanApplicationRepository;
@@ -59,7 +58,7 @@ public class LoansControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .build();
 
-        Mockito.reset(mockedILoansService);
+        Mockito.reset(mockedLoansService);
 
         // Common logic for the all tests. Any test can override it is
         when(infoByIpService.getCountryCode(any())).thenReturn("pl");
@@ -111,7 +110,7 @@ public class LoansControllerTest {
     @Test
     public void when_person_in_black_list_should_return_precondition_failed_status()
     throws Exception {
-        when(mockedILoansService.personalIdIsInBlackList(anyString())).thenReturn(true);
+        when(mockedLoansService.personalIdIsInBlackList(anyString())).thenReturn(true);
 
         mockMvc.perform(
             post("/loans/new")
@@ -123,7 +122,7 @@ public class LoansControllerTest {
                 .param("personalId", "blacklist"))  // person is in a black list
             .andExpect(status().isPreconditionFailed());
 
-        verify(mockedILoansService, times(1)).personalIdIsInBlackList(anyString());
+        verify(mockedLoansService, times(1)).personalIdIsInBlackList(anyString());
 
         // no database changes should be
         assertThat(loanApplicationRepository.count(), is(0L));
@@ -158,7 +157,7 @@ public class LoansControllerTest {
         String countryCode = "pl";
 
         when(infoByIpService.getCountryCode(any())).thenReturn(countryCode);
-        when(mockedILoansService.checkLimitAndIncrement(countryCode)).thenReturn(true);
+        when(mockedLoansService.checkLimitAndIncrement(countryCode)).thenReturn(true);
 
         mockMvc.perform(
             post("/loans/new")
