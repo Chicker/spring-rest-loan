@@ -5,7 +5,7 @@ apply plugin: 'war'
 
 def jacksonVersion = '2.7.0'
 def jsonPathVersion = '2.2.0'
-def springFrameworkVersion = '4.3.5.RELEASE'
+def springFrameworkVersion = '4.3.6.RELEASE'
 def springBootStarterVersion = '1.5.1.RELEASE'
 def rxJavaVersion = '2.0.+'
 
@@ -46,6 +46,7 @@ dependencies {
     compile group: 'io.javaslang', name: 'javaslang', version: '2.0.5'
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxJavaVersion
 //    compile group: 'javax.el', name: 'javax.el-api', version: '2.2.5'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.8.Final'
 
     testCompile group: 'junit', name: 'junit',
             version: jUnitVersion
