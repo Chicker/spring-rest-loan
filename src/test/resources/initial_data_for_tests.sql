@@ -12,3 +12,16 @@ VALUES ('ru', '2017-02-23', '2017-03-24', 2000, 5);
 INSERT INTO LimitsCountryRequests (country_code, date_start, date_end,
                                    requests_limit, requested)
 VALUES ('uk', '2017-01-01', '2017-02-23', 2000, 2000);
+
+INSERT INTO LoanApplications (name, surname, personal_id, amount, term,
+  country_code)
+  VALUES ('Peter', 'Rodriges', '123456', 1200, 365, 'uk');
+
+INSERT INTO LoanApplications (name, surname, personal_id, amount, term,
+                              country_code)
+VALUES ('Peter', 'Rodriges', '123456', 1000, 120, 'uk');
+
+
+INSERT INTO LoanApplications (name, surname, personal_id, amount, term,
+                              country_code)
+  VALUES ('Mary', 'Poppins', '12345678sq', 100, 28, 'uk');

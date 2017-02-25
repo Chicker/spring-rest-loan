@@ -67,6 +67,8 @@ public class LoansControllerTest {
     @Test
     public void when_param_is_not_correct_it_should_return_bad_request()
     throws Exception {
+        long countBefore = loanApplicationRepository.count();
+        
         mockMvc.perform(
             post("/loans/new")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -78,7 +80,7 @@ public class LoansControllerTest {
             .andExpect(status().isBadRequest());
 
         // no database changes should be
-        assertThat(loanApplicationRepository.count(), is(0L));
+        assertThat(loanApplicationRepository.count() - countBefore, is(0L));
     }
 
     @Test
@@ -112,6 +114,8 @@ public class LoansControllerTest {
     throws Exception {
         when(mockedLoansService.personalIdIsInBlackList(anyString())).thenReturn(true);
 
+        long countBefore = loanApplicationRepository.count();
+
         mockMvc.perform(
             post("/loans/new")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -125,11 +129,35 @@ public class LoansControllerTest {
         verify(mockedLoansService, times(1)).personalIdIsInBlackList(anyString());
 
         // no database changes should be
-        assertThat(loanApplicationRepository.count(), is(0L));
+        assertThat(countBefore == loanApplicationRepository.count(), is(true));
     }
 
     @Test
     public void when_loan_application_is_correct_should_save_it_to_db() throws Exception {
+        String testClientIp = "83.12.21.0";
+        String testPersonalId = "1234bcd578";
+
+        when(infoByIpService.getCountryCode(Optional.of(testClientIp))).thenReturn("pl");
+
+        long countBefore = loanApplicationRepository.count();
+        
+        mockMvc.perform(
+            post("/loans/new")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .header("X-Forwarded-For", testClientIp)
+                .param("amount", "1234.80")
+                .param("term", "365")
+                .param("name", "Sebastian")
+                .param("surName", "Rodriges")
+                .param("personalId", testPersonalId))
+            .andExpect(status().isCreated());
+
+        assertThat(loanApplicationRepository.count(), is(countBefore + 1));
+    }
+
+    @Test
+    public void when_input_data_is_correct_should_correctly_determines_code_of_country()
+    throws Exception {
         String testClientIp = "83.12.21.0";
         String testPersonalId = "1234bcd578";
 
@@ -146,9 +174,7 @@ public class LoansControllerTest {
                 .param("personalId", testPersonalId))
             .andExpect(status().isCreated());
 
-        assertThat(loanApplicationRepository.count(), is(1L));
-
-        LoanApplication loanApplication = loanApplicationRepository.findByPersonalId(testPersonalId);
+        LoanApplication loanApplication = loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(testPersonalId);
         assertThat(loanApplication.getCountryCode(), is("pl"));
     }
 
