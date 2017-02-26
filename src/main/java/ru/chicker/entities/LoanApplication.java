@@ -50,6 +50,10 @@ public class LoanApplication {
         this.countryCode = countryCode;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }

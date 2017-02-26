@@ -1,8 +1,12 @@
 package ru.chicker.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.chicker.entities.DecisionOnLoanApplication;
 import ru.chicker.entities.LimitOfRequests;
+import ru.chicker.entities.LoanApplication;
+import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.BlacklistedPersonRepository;
+import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
 import ru.chicker.repositories.LimitOfRequestsRepository;
 
 import java.time.LocalDateTime;
@@ -13,6 +17,9 @@ public class LoansServiceImpl implements LoansService {
 
     @Autowired
     private LimitOfRequestsRepository limitOfRequestsRepository;
+
+    @Autowired
+    private DecisionOnLoanApplicationRepository decisionsRepo;
 
     @Override
     public Boolean personalIdIsInBlackList(String personalId) {
@@ -59,5 +66,20 @@ public class LoansServiceImpl implements LoansService {
         return limitOfRequestsRepository
             .findByCountryCodeAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
                 countryCode, date, date);
+    }
+
+    @Override
+    public void resolveLoanApplication(LoanApplication loanApplication, boolean approve)
+    throws LoanApplicationHasBeenResolvedException {
+        if (null != decisionsRepo.findByLoanApplication(loanApplication)) {
+            throw new LoanApplicationHasBeenResolvedException(loanApplication.getId());
+        }
+
+        int approveInt = approve ? 1 : 0;
+
+        DecisionOnLoanApplication decision = new DecisionOnLoanApplication(LocalDateTime.now(),
+            approveInt, loanApplication);
+
+        decisionsRepo.save(decision);
     }
 }

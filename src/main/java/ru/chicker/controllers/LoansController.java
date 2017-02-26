@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.chicker.entities.LoanApplication;
 import ru.chicker.exceptions.BlockedPersonalIdException;
 import ru.chicker.exceptions.LimitOfRequestsExceededException;
+import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
+import ru.chicker.exceptions.LoanApplicationNotFound;
 import ru.chicker.models.dto.ApplicationLoanDto;
 import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.LoansService;
@@ -60,6 +62,22 @@ public class LoansController {
         loanApplicationRepository.save(loanApplication);
     }
 
+    @RequestMapping(method = RequestMethod.POST,
+        path = "/loans/{loanApplicationId}/approve", headers =
+        "Content-Type=application/x-www-form-urlencoded")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void resolveLoanApplication(@PathVariable Long loanApplicationId,
+                                       @RequestParam boolean approve)
+    throws LoanApplicationNotFound, LoanApplicationHasBeenResolvedException {
+        LoanApplication loanApplication = loanApplicationRepository.findOne(loanApplicationId);
+
+        if (null == loanApplication) {
+            throw new LoanApplicationNotFound(loanApplicationId);
+        }
+
+        loansService.resolveLoanApplication(loanApplication, approve);
+    }
+
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
@@ -73,5 +91,20 @@ public class LoansController {
     public Map handleLimitOfRequestsExceededException(LimitOfRequestsExceededException exception) {
         return ExceptionHandlersUtils.error(exception.getLocalizedMessage());
     }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map handleLoanApplicationNotFound(LoanApplicationNotFound exception) {
+        return ExceptionHandlersUtils.error(exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map handleLoanApplicationHasBeenResolvedException(LoanApplicationHasBeenResolvedException exception) {
+        return ExceptionHandlersUtils.error(exception.getLocalizedMessage());
+    }
+
 
 }

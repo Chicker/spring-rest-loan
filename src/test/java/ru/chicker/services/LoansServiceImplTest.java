@@ -12,12 +12,19 @@ import ru.chicker.configs.PersistenceConfig;
 import ru.chicker.configs.ServiceConfig;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestDataSourceConfig;
+import ru.chicker.entities.DecisionOnLoanApplication;
 import ru.chicker.entities.LimitOfRequests;
+import ru.chicker.entities.LoanApplication;
+import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
+import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
 import ru.chicker.repositories.LimitOfRequestsRepository;
+import ru.chicker.repositories.LoanApplicationRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -37,6 +44,12 @@ public class LoansServiceImplTest {
 
     @Autowired
     private LimitOfRequestsRepository limitOfRequestsRepository;
+
+    @Autowired
+    private LoanApplicationRepository loanApplicationRepository;
+
+    @Autowired
+    private DecisionOnLoanApplicationRepository decisionsRepository;
 
     private final static LocalDateTime on23Feb = LocalDateTime.of(2017, 02, 23, 0, 0);
 
@@ -97,5 +110,41 @@ public class LoansServiceImplTest {
 
         assertThat(oldRequested == newRequested, is(true));
 
+    }
+
+    @Test
+    public void test_accept_loan_application() throws Exception {
+        String personalId = "123456";
+        List<LoanApplication> loanApplicationList = loanApplicationRepository.findByPersonalId(personalId);
+
+        // Peter Rodriges (personal id is equal 123456) created 2 applications.
+        assertThat(loanApplicationList.size(), is(2));
+
+        LoanApplication loanApplication =
+            loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(personalId);
+
+        loansService.resolveLoanApplication(loanApplication, true);
+
+        DecisionOnLoanApplication approvedLoan = decisionsRepository.findByLoanApplication(loanApplication);
+
+        assertThat(approvedLoan, is(notNullValue()));
+        assertThat(approvedLoan.getApproved(), is(1));
+    }
+
+    @Test(expected = LoanApplicationHasBeenResolvedException.class)
+    public void when_try_to_resolve_loan_app_again_should_throw_error() throws Exception {
+        String personalId = "123456";
+
+        LoanApplication loanApplication =
+            loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(personalId);
+
+        loansService.resolveLoanApplication(loanApplication, true);
+
+        DecisionOnLoanApplication approvedLoan = decisionsRepository.findByLoanApplication(loanApplication);
+
+        assertThat(approvedLoan, is(notNullValue()));
+
+        // if try to resolve same loan application again then an exception should be thrown
+        loansService.resolveLoanApplication(loanApplication, false);
     }
 }
