@@ -17,7 +17,8 @@ CREATE TABLE LoanApplications (
   personal_id  varchar(255) NOT NULL, 
   amount       numeric(19, 0) NOT NULL, 
   term         int NOT NULL, 
-  country_code varchar(255) NOT NULL, 
+  country_code varchar(255) NOT NULL,
+  created      datetime NOT NULL,
   PRIMARY KEY (id));
 
 CREATE TABLE LimitsCountryRequests (

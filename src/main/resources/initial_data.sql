@@ -14,14 +14,14 @@ INSERT INTO LimitsCountryRequests (country_code, date_start, date_end,
 VALUES ('uk', '2017-01-01', '2017-02-23', 2000, 2000);
 
 INSERT INTO LoanApplications (name, surname, personal_id, amount, term,
-                              country_code)
-VALUES ('Peter', 'Rodriges', '123456', 1200, 365, 'uk');
+                              country_code, created)
+VALUES ('Peter', 'Rodriges', '123456', 1200, 365, 'uk', '2017-02-25');
 
 INSERT INTO LoanApplications (name, surname, personal_id, amount, term,
-                              country_code)
-VALUES ('Peter', 'Rodriges', '123456', 1000, 120, 'uk');
+                              country_code, created)
+VALUES ('Peter', 'Rodriges', '123456', 1000, 120, 'uk', '2017-02-26');
 
 
 INSERT INTO LoanApplications (name, surname, personal_id, amount, term,
-                              country_code)
-VALUES ('Mary', 'Poppins', '12345678sq', 100, 28, 'uk');
+                              country_code, created)
+VALUES ('Mary', 'Poppins', '12345678sq', 100, 28, 'uk', '2017-01-01');

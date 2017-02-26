@@ -21,6 +21,7 @@ import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.LoansService;
 import ru.chicker.services.InfoByIpService;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -176,6 +177,7 @@ public class LoansControllerTest {
 
         LoanApplication loanApplication = loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(testPersonalId);
         assertThat(loanApplication.getCountryCode(), is("pl"));
+        assertThat(loanApplication.getCreated().toLocalDate(), is(LocalDateTime.now().toLocalDate()));
     }
 
     @Test

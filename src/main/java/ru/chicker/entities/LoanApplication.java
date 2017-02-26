@@ -4,6 +4,7 @@ import ru.chicker.models.dto.ApplicationLoanDto;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -27,18 +28,21 @@ public class LoanApplication {
 
     @Column(name = "country_code")
     private String countryCode;
+    
+    private LocalDateTime created;
 
     protected LoanApplication() {
     }
 
     public LoanApplication(String name, String surName, String personalId, BigDecimal amount,
-                           int term, String countryCode) {
+                           int term, String countryCode, LocalDateTime created) {
         this.name = name;
         this.surName = surName;
         this.personalId = personalId;
         this.amount = amount;
         this.term = term;
         this.countryCode = countryCode;
+        this.created = created;
     }
     
     public LoanApplication(ApplicationLoanDto dto, String countryCode) {
@@ -48,6 +52,7 @@ public class LoanApplication {
         this.amount = dto.getAmount();
         this.term = dto.getTerm();
         this.countryCode = countryCode;
+        this.created = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -102,6 +107,14 @@ public class LoanApplication {
         this.countryCode = countryCode;
     }
 
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
     @Override
     public String toString() {
         return "LoanApplication{" +
@@ -112,6 +125,7 @@ public class LoanApplication {
             ", amount=" + amount +
             ", term=" + term +
             ", countryCode='" + countryCode + '\'' +
+            ", created=" + created +
             '}';
     }
 }
