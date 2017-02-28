@@ -10,6 +10,8 @@ import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
 import ru.chicker.repositories.LimitOfRequestsRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class LoansServiceImpl implements LoansService {
     @Autowired
@@ -81,5 +83,13 @@ public class LoansServiceImpl implements LoansService {
             approveInt, loanApplication);
 
         decisionsRepo.save(decision);
+    }
+
+    @Override
+    public List<LoanApplication> getLoansByApproved(boolean approved) {
+        return decisionsRepo.findByApproved(approved ? 1 : 0)
+            .stream()
+            .map(DecisionOnLoanApplication::getLoanApplication)
+            .collect(Collectors.toList());
     }
 }

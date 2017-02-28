@@ -17,14 +17,19 @@ import ru.chicker.configs.ServiceConfig;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.entities.DecisionOnLoanApplication;
 import ru.chicker.entities.LoanApplication;
+import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
 import ru.chicker.repositories.LoanApplicationRepository;
+import ru.chicker.services.LoansService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,10 +50,34 @@ public class LoansControllerIntegrationTest {
     @Autowired
     private DecisionOnLoanApplicationRepository decisionsRepo;
 
+    @Autowired
+    private LoansService loansService;
+
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .build();
+
+        createTestDataForApproveTests();
+    }
+
+    private void createTestDataForApproveTests() throws LoanApplicationHasBeenResolvedException {
+        String maryPoppins = "12345678sq";
+        String nikelson = "999qsq";
+        List<LoanApplication> maryLoans = loanApplicationRepository.findByPersonalId(maryPoppins);
+        List<LoanApplication> nikelsonLoans = loanApplicationRepository.findByPersonalId(nikelson);
+
+        // approve one loan created by Marry Poppins
+        assertThat(maryLoans.size(), is(1));
+        for (LoanApplication loan : maryLoans) {
+            loansService.resolveLoanApplication(loan, true);
+        }
+
+        // decline all loans created by Robert Nikelson
+        assertThat(nikelsonLoans.size(), is(2));
+        for (LoanApplication loan : nikelsonLoans) {
+            loansService.resolveLoanApplication(loan, false);
+        }
     }
 
     @Test
@@ -80,5 +109,17 @@ public class LoansControllerIntegrationTest {
                 .param("approve", "true"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$['error']").value(containsString("is not exist!")));
+    }
+
+    @Test
+    public void test_request_for_approved_loans() throws Exception {
+        mockMvc.perform(
+            get("/loans/approved/")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+//            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.error").doesNotExist())
+            .andExpect(jsonPath("$.result.length()").value(1))
+            .andExpect(jsonPath("$.result.[0].personalId").value("12345678sq"));
     }
 }

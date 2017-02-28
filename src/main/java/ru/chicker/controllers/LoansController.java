@@ -19,6 +19,8 @@ import ru.chicker.utils.HttpUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -78,6 +80,15 @@ public class LoansController {
         loansService.resolveLoanApplication(loanApplication, approve);
     }
 
+    @RequestMapping(method = RequestMethod.GET, path = "/loans/approved/")
+    @ResponseStatus(code = HttpStatus.OK)
+    @ResponseBody
+    public Map getAllApprovedLoans() {
+        List<LoanApplication> approved = loansService.getLoansByApproved(true);
+        
+        return Collections.singletonMap("result", approved);
+    }
+    
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)

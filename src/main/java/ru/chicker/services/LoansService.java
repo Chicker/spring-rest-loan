@@ -5,6 +5,7 @@ import ru.chicker.entities.LoanApplication;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface LoansService {
     Boolean personalIdIsInBlackList(String personalId);
@@ -23,4 +24,6 @@ public interface LoansService {
      */
     void resolveLoanApplication(LoanApplication loanApplication, boolean approve) throws
                                                                                   LoanApplicationHasBeenResolvedException;
+
+    List<LoanApplication> getLoansByApproved(boolean approved);
 }

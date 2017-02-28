@@ -147,4 +147,30 @@ public class LoansServiceImplTest {
         // if try to resolve same loan application again then an exception should be thrown
         loansService.resolveLoanApplication(loanApplication, false);
     }
+
+    @Test
+    public void test_list_all_approved_loans() throws Exception {
+        String client1Id = "123456";
+        String client2Id = "12345678sq";
+        List<LoanApplication> loansClient1 = loanApplicationRepository.findByPersonalId(client1Id);
+        List<LoanApplication> loansClient2 = loanApplicationRepository.findByPersonalId(client2Id);
+
+        // check the test data
+        assertThat(loansClient1.size(), is(2));
+        assertThat(loansClient2.size(), is(1));
+
+        // prepare test data
+        // N\ow we will approve 3 loans and after this we will test them 
+        for (LoanApplication loan : loansClient1) {
+            loansService.resolveLoanApplication(loan,true);
+        }
+
+        for (LoanApplication loan : loansClient2) {
+            loansService.resolveLoanApplication(loan,true);
+        }
+        
+        List<LoanApplication> approvedLoans = loansService.getLoansByApproved(true);
+
+        assertThat(approvedLoans.size(), is(3));
+    }
 }
