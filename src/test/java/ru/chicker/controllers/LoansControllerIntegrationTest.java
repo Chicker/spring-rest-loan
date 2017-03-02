@@ -29,7 +29,6 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @Rollback
 public class LoansControllerIntegrationTest {
+    public static final String PERSONAL_ID_MARRY_POPPINS = "12345678sq";
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -62,9 +62,8 @@ public class LoansControllerIntegrationTest {
     }
 
     private void createTestDataForApproveTests() throws LoanApplicationHasBeenResolvedException {
-        String maryPoppins = "12345678sq";
         String nikelson = "999qsq";
-        List<LoanApplication> maryLoans = loanApplicationRepository.findByPersonalId(maryPoppins);
+        List<LoanApplication> maryLoans = loanApplicationRepository.findByPersonalId(PERSONAL_ID_MARRY_POPPINS);
         List<LoanApplication> nikelsonLoans = loanApplicationRepository.findByPersonalId(nikelson);
 
         // approve one loan created by Marry Poppins
@@ -121,5 +120,17 @@ public class LoansControllerIntegrationTest {
             .andExpect(jsonPath("$.error").doesNotExist())
             .andExpect(jsonPath("$.result.length()").value(1))
             .andExpect(jsonPath("$.result.[0].personalId").value("12345678sq"));
+    }
+
+    @Test
+    public void test_request_for_approved_loans_by_client() throws Exception {
+        mockMvc.perform(
+            get(String.format("/clients/%s/loans/approved/", PERSONAL_ID_MARRY_POPPINS))
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.error").doesNotExist())
+            .andExpect(jsonPath("$.result.length()").value(1))
+            .andExpect(jsonPath("$.result.[0].personalId").value("12345678sq"));
+
     }
 }

@@ -26,4 +26,6 @@ public interface LoansService {
                                                                                   LoanApplicationHasBeenResolvedException;
 
     List<LoanApplication> getLoansByApproved(boolean approved);
+
+    List<LoanApplication> getLoansByClient(String personalId, boolean approved);
 }

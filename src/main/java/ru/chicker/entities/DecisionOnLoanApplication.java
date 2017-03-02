@@ -15,7 +15,7 @@ public class DecisionOnLoanApplication {
 
     private int approved;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(optional = false)
     @JoinColumn(name = "fk_loan_application")
     private LoanApplication loanApplication;
 
@@ -55,6 +55,10 @@ public class DecisionOnLoanApplication {
 
     public Long getId() {
         return id;
+    }
+
+    public boolean getApprovedAsBool() {
+        return getApproved() != 0 ? true : false;
     }
 
     @Override

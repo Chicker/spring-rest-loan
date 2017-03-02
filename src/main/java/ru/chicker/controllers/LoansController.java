@@ -88,6 +88,17 @@ public class LoansController {
         
         return Collections.singletonMap("result", approved);
     }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "/clients/{personalId}/loans/approved/")
+    @ResponseStatus(code = HttpStatus.OK)
+    @ResponseBody
+    public Map getApprovedLoansByClient(@PathVariable String personalId) {
+        List<LoanApplication> loansByClient = loansService.getLoansByClient(personalId, true);
+
+        return Collections.singletonMap("result", loansByClient);
+    }
     
     @ExceptionHandler
     @ResponseBody

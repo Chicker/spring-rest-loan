@@ -1,5 +1,6 @@
 package ru.chicker.repositories;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import ru.chicker.entities.DecisionOnLoanApplication;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface DecisionOnLoanApplicationRepository extends
-    CrudRepository<DecisionOnLoanApplication, Long> {
+    MyRepository<DecisionOnLoanApplication, Long> {
 
     DecisionOnLoanApplication findByLoanApplication(LoanApplication loanApplication);
     List<DecisionOnLoanApplication> findByApproved(int approved);

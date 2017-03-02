@@ -8,6 +8,7 @@ import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.BlacklistedPersonRepository;
 import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
 import ru.chicker.repositories.LimitOfRequestsRepository;
+import ru.chicker.repositories.LoanApplicationRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +23,9 @@ public class LoansServiceImpl implements LoansService {
 
     @Autowired
     private DecisionOnLoanApplicationRepository decisionsRepo;
+
+    @Autowired
+    private LoanApplicationRepository loansRepo;
 
     @Override
     public Boolean personalIdIsInBlackList(String personalId) {
@@ -83,6 +87,8 @@ public class LoansServiceImpl implements LoansService {
             approveInt, loanApplication);
 
         decisionsRepo.save(decision);
+        // Once new child entity has been created, the parent entity should be refreshed
+        decisionsRepo.getEntityManager().refresh(loanApplication);
     }
 
     @Override
@@ -91,5 +97,20 @@ public class LoansServiceImpl implements LoansService {
             .stream()
             .map(DecisionOnLoanApplication::getLoanApplication)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<LoanApplication> getLoansByClient(String personalId, boolean approved) {
+        return loansRepo.findByPersonalId(personalId)
+                .stream()
+                .filter(loan -> {
+                    DecisionOnLoanApplication decision = loan.getDecision();
+                    if (null == decision) {
+                        return false;
+                    } else {
+                        return decision.getApprovedAsBool() == approved;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 }

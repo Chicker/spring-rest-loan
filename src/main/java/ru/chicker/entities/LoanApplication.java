@@ -1,5 +1,6 @@
 package ru.chicker.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.chicker.models.dto.ApplicationLoanDto;
 
 import javax.persistence.*;
@@ -15,21 +16,25 @@ public class LoanApplication {
     private Long id;
 
     private String name;
-    
+
     @Column(name = "surname")
     private String surName;
-    
+
     @Column(name = "personal_id")
     private String personalId;
-    
+
     private BigDecimal amount;
-    
+
     private int term;
 
     @Column(name = "country_code")
     private String countryCode;
-    
+
     private LocalDateTime created;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "loanApplication")
+    private DecisionOnLoanApplication decision;
 
     protected LoanApplication() {
     }
@@ -44,7 +49,7 @@ public class LoanApplication {
         this.countryCode = countryCode;
         this.created = created;
     }
-    
+
     public LoanApplication(ApplicationLoanDto dto, String countryCode) {
         this.name = dto.getName();
         this.surName = dto.getSurName();
@@ -113,6 +118,14 @@ public class LoanApplication {
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
+    }
+
+    public DecisionOnLoanApplication getDecision() {
+        return decision;
+    }
+
+    public void setDecision(DecisionOnLoanApplication decision) {
+        this.decision = decision;
     }
 
     @Override

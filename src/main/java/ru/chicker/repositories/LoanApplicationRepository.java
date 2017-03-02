@@ -1,13 +1,14 @@
 package ru.chicker.repositories;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.chicker.entities.LoanApplication;
 
 import java.util.List;
 
 @Repository
-public interface LoanApplicationRepository extends CrudRepository<LoanApplication, Long> {
+public interface LoanApplicationRepository extends MyRepository<LoanApplication, Long> {
     /**
      * Use this only for testing purpose, because it uses the assumption about the order of ids
      * records
@@ -17,5 +18,10 @@ public interface LoanApplicationRepository extends CrudRepository<LoanApplicatio
      */
     LoanApplication findFirst1ByPersonalIdOrderByIdDesc(String personalId);
 
-    List<LoanApplication> findByPersonalId(String personalId);
+//    List<LoanApplication> findByPersonalId(String personalId);
+
+    @Query("select loan from LoanApplication\n" +
+        "loan left join DecisionOnLoanApplication d on loan.id = d.loanApplication\n" +
+        "where loan.personalId = :personalId")
+    List<LoanApplication> findByPersonalId(@Param("personalId") String personalId);
 }
