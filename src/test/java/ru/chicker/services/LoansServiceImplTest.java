@@ -15,10 +15,10 @@ import ru.chicker.configs.TestDataSourceConfig;
 import ru.chicker.entities.DecisionOnLoanApplication;
 import ru.chicker.entities.LimitOfRequests;
 import ru.chicker.entities.LoanApplication;
+import ru.chicker.entities.dao.DecisionOnLoanApplicationDao;
+import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
-import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
-import ru.chicker.repositories.LimitOfRequestsRepository;
-import ru.chicker.repositories.LoanApplicationRepository;
+import ru.chicker.repositories.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,10 +46,10 @@ public class LoansServiceImplTest {
     private LimitOfRequestsRepository limitOfRequestsRepository;
 
     @Autowired
-    private LoanApplicationRepository loanApplicationRepository;
+    private LoanApplicationRepositoryDao loanApplicationRepository;
 
     @Autowired
-    private DecisionOnLoanApplicationRepository decisionsRepository;
+    private DecisionOnLoanApplicationRepositoryDao decisionsRepository;
 
     private final static LocalDateTime on23Feb = LocalDateTime.of(2017, 02, 23, 0, 0);
 
@@ -115,45 +115,45 @@ public class LoansServiceImplTest {
     @Test
     public void test_accept_loan_application() throws Exception {
         String personalId = "123456";
-        List<LoanApplication> loanApplicationList = loanApplicationRepository.findByPersonalId(personalId);
+        List<LoanApplicationDao> loanApplicationList = loanApplicationRepository.findByPersonalId(personalId);
 
         // Peter Rodriges (personal id is equal 123456) created 2 applications.
         assertThat(loanApplicationList.size(), is(2));
 
-        LoanApplication loanApplication =
+        LoanApplicationDao loanApplication =
             loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(personalId);
 
-        loansService.resolveLoanApplication(loanApplication, true);
+        loansService.resolveLoanApplication(loanApplication.getId(), true);
 
-        DecisionOnLoanApplication approvedLoan = decisionsRepository.findByLoanApplication(loanApplication);
+        DecisionOnLoanApplicationDao approvedLoan = decisionsRepository.findByLoanApplication(loanApplication.getId());
 
         assertThat(approvedLoan, is(notNullValue()));
-        assertThat(approvedLoan.getApproved(), is(1));
+        assertThat(approvedLoan.getApproved(), is(true));
     }
 
     @Test(expected = LoanApplicationHasBeenResolvedException.class)
     public void when_try_to_resolve_loan_app_again_should_throw_error() throws Exception {
         String personalId = "123456";
 
-        LoanApplication loanApplication =
+        LoanApplicationDao loanApplication =
             loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(personalId);
 
-        loansService.resolveLoanApplication(loanApplication, true);
+        loansService.resolveLoanApplication(loanApplication.getId(), true);
 
-        DecisionOnLoanApplication approvedLoan = decisionsRepository.findByLoanApplication(loanApplication);
+        DecisionOnLoanApplicationDao approvedLoan = decisionsRepository.findByLoanApplication(loanApplication.getId());
 
         assertThat(approvedLoan, is(notNullValue()));
 
         // if try to resolve same loan application again then an exception should be thrown
-        loansService.resolveLoanApplication(loanApplication, false);
+        loansService.resolveLoanApplication(loanApplication.getId(), false);
     }
 
     @Test
     public void test_list_all_approved_loans() throws Exception {
         String client1Id = "123456";
         String client2Id = "12345678sq";
-        List<LoanApplication> loansClient1 = loanApplicationRepository.findByPersonalId(client1Id);
-        List<LoanApplication> loansClient2 = loanApplicationRepository.findByPersonalId(client2Id);
+        List<LoanApplicationDao> loansClient1 = loanApplicationRepository.findByPersonalId(client1Id);
+        List<LoanApplicationDao> loansClient2 = loanApplicationRepository.findByPersonalId(client2Id);
 
         // check the test data
         assertThat(loansClient1.size(), is(2));
@@ -161,15 +161,15 @@ public class LoansServiceImplTest {
 
         // prepare test data
         // N\ow we will approve 3 loans and after this we will test them 
-        for (LoanApplication loan : loansClient1) {
-            loansService.resolveLoanApplication(loan,true);
+        for (LoanApplicationDao loan : loansClient1) {
+            loansService.resolveLoanApplication(loan.getId(),true);
         }
 
-        for (LoanApplication loan : loansClient2) {
-            loansService.resolveLoanApplication(loan,true);
+        for (LoanApplicationDao loan : loansClient2) {
+            loansService.resolveLoanApplication(loan.getId(),true);
         }
         
-        List<LoanApplication> approvedLoans = loansService.getLoansByApproved(true);
+        List<LoanApplicationDao> approvedLoans = loansService.getLoansByApproved(true);
 
         assertThat(approvedLoans.size(), is(3));
     }

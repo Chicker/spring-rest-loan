@@ -16,13 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestServiceConfig;
-import ru.chicker.entities.LoanApplication;
-import ru.chicker.repositories.LoanApplicationRepository;
-import ru.chicker.services.LoansService;
+import ru.chicker.repositories.LoanApplicationRepositoryDao;
 import ru.chicker.services.InfoByIpService;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
+import ru.chicker.services.LoansService;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -48,7 +44,7 @@ public class LoansControllerTest {
     private LoansService mockedLoansService;
 
     @Autowired
-    private LoanApplicationRepository loanApplicationRepository;
+    private LoanApplicationRepositoryDao loanApplicationRepository;
 
     @Autowired
     private InfoByIpService infoByIpService;
@@ -132,54 +128,7 @@ public class LoansControllerTest {
         // no database changes should be
         assertThat(countBefore == loanApplicationRepository.count(), is(true));
     }
-
-    @Test
-    public void when_loan_application_is_correct_should_save_it_to_db() throws Exception {
-        String testClientIp = "83.12.21.0";
-        String testPersonalId = "1234bcd578";
-
-        when(infoByIpService.getCountryCode(Optional.of(testClientIp))).thenReturn("pl");
-
-        long countBefore = loanApplicationRepository.count();
-        
-        mockMvc.perform(
-            post("/loans/new")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .header("X-Forwarded-For", testClientIp)
-                .param("amount", "1234.80")
-                .param("term", "365")
-                .param("name", "Sebastian")
-                .param("surName", "Rodriges")
-                .param("personalId", testPersonalId))
-            .andExpect(status().isCreated());
-
-        assertThat(loanApplicationRepository.count(), is(countBefore + 1));
-    }
-
-    @Test
-    public void when_input_data_is_correct_should_correctly_determines_code_of_country()
-    throws Exception {
-        String testClientIp = "83.12.21.0";
-        String testPersonalId = "1234bcd578";
-
-        when(infoByIpService.getCountryCode(Optional.of(testClientIp))).thenReturn("pl");
-
-        mockMvc.perform(
-            post("/loans/new")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .header("X-Forwarded-For", testClientIp)
-                .param("amount", "1234.80")
-                .param("term", "365")
-                .param("name", "Sebastian")
-                .param("surName", "Rodriges")
-                .param("personalId", testPersonalId))
-            .andExpect(status().isCreated());
-
-        LoanApplication loanApplication = loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(testPersonalId);
-        assertThat(loanApplication.getCountryCode(), is("pl"));
-        assertThat(loanApplication.getCreated().toLocalDate(), is(LocalDateTime.now().toLocalDate()));
-    }
-
+    
     @Test
     public void when_limit_for_given_country_exceeded_should_return_error() throws Exception {
         String countryCode = "pl";

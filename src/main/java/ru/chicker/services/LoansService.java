@@ -1,7 +1,7 @@
 package ru.chicker.services;
 
 import ru.chicker.entities.LimitOfRequests;
-import ru.chicker.entities.LoanApplication;
+import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 
 import java.time.LocalDateTime;
@@ -19,13 +19,17 @@ public interface LoansService {
     /**
      * Accept or decline loan application.
      * Note. For given loan application should not be exist a record in the decisions table! 
-     * @param loanApplication 
+     * @param loanApplicationId 
      * @param approve if it false then the loan application be declined
      */
-    void resolveLoanApplication(LoanApplication loanApplication, boolean approve) throws
+    void resolveLoanApplication(Long loanApplicationId, boolean approve) throws
                                                                                   LoanApplicationHasBeenResolvedException;
 
-    List<LoanApplication> getLoansByApproved(boolean approved);
+    List<LoanApplicationDao> getLoansByApproved(boolean approved);
 
-    List<LoanApplication> getLoansByClient(String personalId, boolean approved);
+    List<LoanApplicationDao> getLoansByClient(String personalId, boolean approved);
+
+    LoanApplicationDao findById(Long loanApplicationId);
+
+    void addLoanApplication(LoanApplicationDao loanApplication);
 }

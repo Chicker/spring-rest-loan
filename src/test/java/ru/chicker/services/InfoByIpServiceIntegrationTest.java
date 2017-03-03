@@ -15,6 +15,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 import ru.chicker.configs.PersistenceConfig;
 import ru.chicker.configs.ServiceConfig;
+import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestDataSourceConfig;
 import ru.chicker.services.internal.InfoByIpFreeGeoIpProvider;
 import ru.chicker.services.internal.InfoByIpIpApiProvider;
@@ -29,7 +30,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
-@WebAppConfiguration
 public class InfoByIpServiceIntegrationTest {
 
     @Configuration

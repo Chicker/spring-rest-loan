@@ -6,14 +6,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.chicker.entities.LoanApplication;
+import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.BlockedPersonalIdException;
 import ru.chicker.exceptions.LimitOfRequestsExceededException;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.exceptions.LoanApplicationNotFound;
 import ru.chicker.models.dto.ApplicationLoanDto;
-import ru.chicker.repositories.LoanApplicationRepository;
-import ru.chicker.services.LoansService;
+import ru.chicker.repositories.LoanApplicationRepositoryDao;
 import ru.chicker.services.InfoByIpService;
+import ru.chicker.services.LoansService;
 import ru.chicker.utils.ExceptionHandlersUtils;
 import ru.chicker.utils.HttpUtils;
 
@@ -29,18 +30,18 @@ import java.util.Optional;
 public class LoansController {
     private LoansService loansService;
     private final InfoByIpService infoByIpService;
-    private final LoanApplicationRepository loanApplicationRepository;
+    private final LoanApplicationRepositoryDao loanApplicationRepository;
 
     public LoansController(LoansService loansService,
                            InfoByIpService infoByIpService,
-                           LoanApplicationRepository loanApplicationRepository) {
+                           LoanApplicationRepositoryDao loanApplicationRepository) {
         this.loansService = loansService;
         this.infoByIpService = infoByIpService;
         this.loanApplicationRepository = loanApplicationRepository;
     }
 
     @RequestMapping(method = RequestMethod.POST,
-        path = "/loans/new", headers = "Content-Type=application/x-www-form-urlencoded")
+            path = "/loans/new", headers = "Content-Type=application/x-www-form-urlencoded")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void createApplicationLoan(@Valid ApplicationLoanDto appLoanDto,
                                       BindingResult bindingResult, HttpServletRequest request)
@@ -59,9 +60,9 @@ public class LoansController {
             throw new LimitOfRequestsExceededException(countryCode);
         }
 
-        LoanApplication loanApplication = new LoanApplication(appLoanDto, countryCode);
+        LoanApplicationDao loanApplication = new LoanApplicationDao(appLoanDto, countryCode);
 
-        loanApplicationRepository.save(loanApplication);
+        loansService.addLoanApplication(loanApplication);
     }
 
     @RequestMapping(method = RequestMethod.POST,
@@ -71,21 +72,21 @@ public class LoansController {
     public void resolveLoanApplication(@PathVariable Long loanApplicationId,
                                        @RequestParam boolean approve)
     throws LoanApplicationNotFound, LoanApplicationHasBeenResolvedException {
-        LoanApplication loanApplication = loanApplicationRepository.findOne(loanApplicationId);
+        LoanApplicationDao loanApplication = loansService.findById(loanApplicationId);
 
         if (null == loanApplication) {
             throw new LoanApplicationNotFound(loanApplicationId);
         }
 
-        loansService.resolveLoanApplication(loanApplication, approve);
+        loansService.resolveLoanApplication(loanApplicationId, approve);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/loans/approved/")
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     public Map getAllApprovedLoans() {
-        List<LoanApplication> approved = loansService.getLoansByApproved(true);
-        
+        List<LoanApplicationDao> approved = loansService.getLoansByApproved(true);
+
         return Collections.singletonMap("result", approved);
     }
 
@@ -95,7 +96,7 @@ public class LoansController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     public Map getApprovedLoansByClient(@PathVariable String personalId) {
-        List<LoanApplication> loansByClient = loansService.getLoansByClient(personalId, true);
+        List<LoanApplicationDao> loansByClient = loansService.getLoansByClient(personalId, true);
 
         return Collections.singletonMap("result", loansByClient);
     }

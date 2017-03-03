@@ -1,18 +1,16 @@
 package ru.chicker.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.chicker.entities.DecisionOnLoanApplication;
 import ru.chicker.entities.LimitOfRequests;
-import ru.chicker.entities.LoanApplication;
+import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.BlacklistedPersonRepository;
-import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
+import ru.chicker.repositories.DecisionOnLoanApplicationRepositoryDao;
 import ru.chicker.repositories.LimitOfRequestsRepository;
-import ru.chicker.repositories.LoanApplicationRepository;
+import ru.chicker.repositories.LoanApplicationRepositoryDao;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class LoansServiceImpl implements LoansService {
     @Autowired
@@ -22,10 +20,10 @@ public class LoansServiceImpl implements LoansService {
     private LimitOfRequestsRepository limitOfRequestsRepository;
 
     @Autowired
-    private DecisionOnLoanApplicationRepository decisionsRepo;
+    private DecisionOnLoanApplicationRepositoryDao decisionsRepo;
 
     @Autowired
-    private LoanApplicationRepository loansRepo;
+    private LoanApplicationRepositoryDao loansRepo;
 
     @Override
     public Boolean personalIdIsInBlackList(String personalId) {
@@ -75,42 +73,33 @@ public class LoansServiceImpl implements LoansService {
     }
 
     @Override
-    public void resolveLoanApplication(LoanApplication loanApplication, boolean approve)
+    public void resolveLoanApplication(Long loanApplicationId, boolean approve)
     throws LoanApplicationHasBeenResolvedException {
-        if (null != decisionsRepo.findByLoanApplication(loanApplication)) {
-            throw new LoanApplicationHasBeenResolvedException(loanApplication.getId());
+        if (null != decisionsRepo.findByLoanApplication(loanApplicationId)) {
+            throw new LoanApplicationHasBeenResolvedException(loanApplicationId);
         }
 
-        int approveInt = approve ? 1 : 0;
-
-        DecisionOnLoanApplication decision = new DecisionOnLoanApplication(LocalDateTime.now(),
-            approveInt, loanApplication);
-
-        decisionsRepo.save(decision);
-        // Once new child entity has been created, the parent entity should be refreshed
-        decisionsRepo.getEntityManager().refresh(loanApplication);
+        decisionsRepo.addDecision(loanApplicationId, LocalDateTime.now(), approve);
     }
 
     @Override
-    public List<LoanApplication> getLoansByApproved(boolean approved) {
-        return decisionsRepo.findByApproved(approved ? 1 : 0)
-            .stream()
-            .map(DecisionOnLoanApplication::getLoanApplication)
-            .collect(Collectors.toList());
+    public List<LoanApplicationDao> getLoansByApproved(boolean approved) {
+        return loansRepo.findLoansByApproved(approved);
     }
 
     @Override
-    public List<LoanApplication> getLoansByClient(String personalId, boolean approved) {
-        return loansRepo.findByPersonalId(personalId)
-                .stream()
-                .filter(loan -> {
-                    DecisionOnLoanApplication decision = loan.getDecision();
-                    if (null == decision) {
-                        return false;
-                    } else {
-                        return decision.getApprovedAsBool() == approved;
-                    }
-                })
-                .collect(Collectors.toList());
+    public List<LoanApplicationDao> getLoansByClient(String personalId, boolean approved) {
+        return loansRepo.findLoansByClientAndByApproved(personalId, approved);
+    }
+
+    @Override
+    public LoanApplicationDao findById(Long loanApplicationId) {
+        
+        return loansRepo.findById(loanApplicationId);
+    }
+
+    @Override
+    public void addLoanApplication(LoanApplicationDao loanApplication) {
+        loansRepo.addLoanApplication(loanApplication);
     }
 }
