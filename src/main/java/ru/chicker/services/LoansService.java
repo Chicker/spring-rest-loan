@@ -1,6 +1,7 @@
 package ru.chicker.services;
 
 import ru.chicker.entities.LimitOfRequests;
+import ru.chicker.entities.dao.LimitOfRequestsDao;
 import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 
@@ -12,9 +13,9 @@ public interface LoansService {
 
     boolean checkLimitAndIncrement(String countryCode);
 
-    LimitOfRequests getActualLimitOfRequests(String countryCode);
+    LimitOfRequestsDao getActualLimitOfRequests(String countryCode);
 
-    LimitOfRequests getLimitOfRequestsOnDate(String countryCode, LocalDateTime date);
+    LimitOfRequestsDao getLimitOfRequestsOnDate(String countryCode, LocalDateTime date);
 
     /**
      * Accept or decline loan application.

@@ -16,6 +16,7 @@ import ru.chicker.entities.DecisionOnLoanApplication;
 import ru.chicker.entities.LimitOfRequests;
 import ru.chicker.entities.LoanApplication;
 import ru.chicker.entities.dao.DecisionOnLoanApplicationDao;
+import ru.chicker.entities.dao.LimitOfRequestsDao;
 import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.*;
@@ -41,9 +42,6 @@ public class LoansServiceImplTest {
 
     @Autowired
     private LoansService loansService;
-
-    @Autowired
-    private LimitOfRequestsRepository limitOfRequestsRepository;
 
     @Autowired
     private LoanApplicationRepositoryDao loanApplicationRepository;
@@ -83,13 +81,13 @@ public class LoansServiceImplTest {
     public void when_new_request_comes_in_should_increment_requested() throws Exception {
         String countryCode = "ru";
 
-        LimitOfRequests limitOfRequests = loansService.getLimitOfRequestsOnDate(countryCode,
+        LimitOfRequestsDao limitOfRequests = loansService.getLimitOfRequestsOnDate(countryCode,
             on23Feb);
         long currentRequested = limitOfRequests.getRequested();
 
         loansService.checkLimitAndIncrement(countryCode);
 
-        LimitOfRequests limitOfRequests2 = loansService.getLimitOfRequestsOnDate(countryCode,
+        LimitOfRequestsDao limitOfRequests2 = loansService.getLimitOfRequestsOnDate(countryCode,
             on23Feb);
         long newRequested = limitOfRequests2.getRequested();
 

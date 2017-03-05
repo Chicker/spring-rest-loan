@@ -2,12 +2,10 @@ package ru.chicker.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.chicker.entities.LimitOfRequests;
+import ru.chicker.entities.dao.LimitOfRequestsDao;
 import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
-import ru.chicker.repositories.BlacklistedPersonRepository;
-import ru.chicker.repositories.DecisionOnLoanApplicationRepositoryDao;
-import ru.chicker.repositories.LimitOfRequestsRepository;
-import ru.chicker.repositories.LoanApplicationRepositoryDao;
+import ru.chicker.repositories.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +15,7 @@ public class LoansServiceImpl implements LoansService {
     private BlacklistedPersonRepository blacklistedPersonRepository;
 
     @Autowired
-    private LimitOfRequestsRepository limitOfRequestsRepository;
+    private LimitOfRequestsRepositoryDao limitOfRequestsRepository;
 
     @Autowired
     private DecisionOnLoanApplicationRepositoryDao decisionsRepo;
@@ -42,7 +40,7 @@ public class LoansServiceImpl implements LoansService {
     public boolean checkLimitAndIncrement(String countryCode) {
         LocalDateTime nowDateTime = LocalDateTime.now();
 
-        LimitOfRequests limitOfRequests = getActualLimitOfRequests(countryCode);
+        LimitOfRequestsDao limitOfRequests = getActualLimitOfRequests(countryCode);
 
         if (null == limitOfRequests) {
             // if the actual limit for specified code of country is not exist
@@ -50,26 +48,24 @@ public class LoansServiceImpl implements LoansService {
         }
 
         long newRequestsCount = limitOfRequests.getRequested() + 1; // include current request
-        long requestsLimit = limitOfRequests.getRequestsLimit();
+        long requestsLimit = limitOfRequests.getLimit();
 
         // increment the count of requests for loan application and save it to DB 
         limitOfRequests.setRequested(newRequestsCount);
-        limitOfRequestsRepository.save(limitOfRequests);
+        limitOfRequestsRepository.update(limitOfRequests);
 
         return newRequestsCount > requestsLimit;
     }
 
-    public LimitOfRequests getActualLimitOfRequests(String countryCode) {
+    public LimitOfRequestsDao getActualLimitOfRequests(String countryCode) {
         LocalDateTime dateTimeNow = LocalDateTime.now();
         return limitOfRequestsRepository
-            .findByCountryCodeAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
-                countryCode, dateTimeNow, dateTimeNow);
+            .findByCountryCodeAndBetweenDates(countryCode, dateTimeNow, dateTimeNow);
     }
 
-    public LimitOfRequests getLimitOfRequestsOnDate(String countryCode, LocalDateTime date) {
+    public LimitOfRequestsDao getLimitOfRequestsOnDate(String countryCode, LocalDateTime date) {
         return limitOfRequestsRepository
-            .findByCountryCodeAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
-                countryCode, date, date);
+            .findByCountryCodeAndBetweenDates(countryCode, date, date);
     }
 
     @Override
