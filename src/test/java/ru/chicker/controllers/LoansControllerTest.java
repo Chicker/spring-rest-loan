@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestServiceConfig;
-import ru.chicker.repositories.LoanApplicationRepositoryDao;
+import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.InfoByIpService;
 import ru.chicker.services.LoansService;
 
@@ -44,7 +44,7 @@ public class LoansControllerTest {
     private LoansService mockedLoansService;
 
     @Autowired
-    private LoanApplicationRepositoryDao loanApplicationRepository;
+    private LoanApplicationRepository loanApplicationRepository;
 
     @Autowired
     private InfoByIpService infoByIpService;

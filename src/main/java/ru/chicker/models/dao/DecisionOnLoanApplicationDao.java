@@ -1,4 +1,4 @@
-package ru.chicker.entities.dao;
+package ru.chicker.models.dao;
 
 import org.springframework.jdbc.core.RowMapper;
 

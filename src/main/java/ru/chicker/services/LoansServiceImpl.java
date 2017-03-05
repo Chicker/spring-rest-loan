@@ -1,29 +1,29 @@
 package ru.chicker.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.chicker.entities.dao.LimitOfRequestsDao;
-import ru.chicker.entities.dao.LoanApplicationDao;
+import ru.chicker.models.dao.LimitOfRequestsDao;
+import ru.chicker.models.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
-import ru.chicker.repositories.BlacklistedPersonRepositoryDao;
-import ru.chicker.repositories.DecisionOnLoanApplicationRepositoryDao;
-import ru.chicker.repositories.LimitOfRequestsRepositoryDao;
-import ru.chicker.repositories.LoanApplicationRepositoryDao;
+import ru.chicker.repositories.BlacklistedPersonRepository;
+import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
+import ru.chicker.repositories.LimitOfRequestsRepository;
+import ru.chicker.repositories.LoanApplicationRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class LoansServiceImpl implements LoansService {
     @Autowired
-    private BlacklistedPersonRepositoryDao blacklistedPersonRepository;
+    private BlacklistedPersonRepository blacklistedPersonRepository;
 
     @Autowired
-    private LimitOfRequestsRepositoryDao limitOfRequestsRepository;
+    private LimitOfRequestsRepository limitOfRequestsRepository;
 
     @Autowired
-    private DecisionOnLoanApplicationRepositoryDao decisionsRepo;
+    private DecisionOnLoanApplicationRepository decisionsRepo;
 
     @Autowired
-    private LoanApplicationRepositoryDao loansRepo;
+    private LoanApplicationRepository loansRepo;
 
     @Override
     public Boolean personalIdIsInBlackList(String personalId) {

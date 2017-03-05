@@ -5,13 +5,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.chicker.entities.dao.LoanApplicationDao;
+import ru.chicker.models.dao.LoanApplicationDao;
 import ru.chicker.exceptions.BlockedPersonalIdException;
 import ru.chicker.exceptions.LimitOfRequestsExceededException;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.exceptions.LoanApplicationNotFound;
 import ru.chicker.models.dto.ApplicationLoanDto;
-import ru.chicker.repositories.LoanApplicationRepositoryDao;
+import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.InfoByIpService;
 import ru.chicker.services.LoansService;
 import ru.chicker.utils.ExceptionHandlersUtils;
@@ -29,11 +29,11 @@ import java.util.Optional;
 public class LoansController {
     private LoansService loansService;
     private final InfoByIpService infoByIpService;
-    private final LoanApplicationRepositoryDao loanApplicationRepository;
+    private final LoanApplicationRepository loanApplicationRepository;
 
     public LoansController(LoansService loansService,
                            InfoByIpService infoByIpService,
-                           LoanApplicationRepositoryDao loanApplicationRepository) {
+                           LoanApplicationRepository loanApplicationRepository) {
         this.loansService = loansService;
         this.infoByIpService = infoByIpService;
         this.loanApplicationRepository = loanApplicationRepository;

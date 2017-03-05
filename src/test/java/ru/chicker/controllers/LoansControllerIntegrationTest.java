@@ -21,11 +21,11 @@ import ru.chicker.configs.PersistenceConfig;
 import ru.chicker.configs.ServiceConfig;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestDataSourceConfig;
-import ru.chicker.entities.dao.DecisionOnLoanApplicationDao;
-import ru.chicker.entities.dao.LoanApplicationDao;
+import ru.chicker.models.dao.DecisionOnLoanApplicationDao;
+import ru.chicker.models.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
-import ru.chicker.repositories.DecisionOnLoanApplicationRepositoryDao;
-import ru.chicker.repositories.LoanApplicationRepositoryDao;
+import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
+import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.InfoByIpService;
 import ru.chicker.services.LoansService;
 
@@ -64,10 +64,10 @@ public class LoansControllerIntegrationTest {
     private static MockMvc mockMvc;
 
     @Autowired
-    private LoanApplicationRepositoryDao loanApplicationRepository;
+    private LoanApplicationRepository loanApplicationRepository;
 
     @Autowired
-    private DecisionOnLoanApplicationRepositoryDao decisionsRepo;
+    private DecisionOnLoanApplicationRepository decisionsRepo;
 
     @Autowired
     private LoansService loansService;

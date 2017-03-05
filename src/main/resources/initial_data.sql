@@ -25,3 +25,6 @@ VALUES ('Peter', 'Rodriges', '123456', 1000, 120, 'uk', '2017-02-26');
 INSERT INTO LoanApplications (name, surname, personal_id, amount, term,
                               country_code, created)
 VALUES ('Mary', 'Poppins', '12345678sq', 100, 28, 'uk', '2017-01-01');
+
+INSERT INTO DecisionsOnLoanApplication (decision_date, approved, fk_loan_application)
+    VALUES ('2017-02-27', 1, 3)

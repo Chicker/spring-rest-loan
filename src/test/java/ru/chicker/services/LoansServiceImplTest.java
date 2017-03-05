@@ -12,9 +12,9 @@ import ru.chicker.configs.PersistenceConfig;
 import ru.chicker.configs.ServiceConfig;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestDataSourceConfig;
-import ru.chicker.entities.dao.DecisionOnLoanApplicationDao;
-import ru.chicker.entities.dao.LimitOfRequestsDao;
-import ru.chicker.entities.dao.LoanApplicationDao;
+import ru.chicker.models.dao.DecisionOnLoanApplicationDao;
+import ru.chicker.models.dao.LimitOfRequestsDao;
+import ru.chicker.models.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.*;
 
@@ -41,10 +41,10 @@ public class LoansServiceImplTest {
     private LoansService loansService;
 
     @Autowired
-    private LoanApplicationRepositoryDao loanApplicationRepository;
+    private LoanApplicationRepository loanApplicationRepository;
 
     @Autowired
-    private DecisionOnLoanApplicationRepositoryDao decisionsRepository;
+    private DecisionOnLoanApplicationRepository decisionsRepository;
 
     private final static LocalDateTime on23Feb = LocalDateTime.of(2017, 02, 23, 0, 0);
 

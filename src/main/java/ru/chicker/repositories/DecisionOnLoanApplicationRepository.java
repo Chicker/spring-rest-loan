@@ -3,7 +3,7 @@ package ru.chicker.repositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.chicker.entities.dao.DecisionOnLoanApplicationDao;
+import ru.chicker.models.dao.DecisionOnLoanApplicationDao;
 import ru.chicker.utils.JdbcTemplateUtils;
 
 import javax.sql.DataSource;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public class DecisionOnLoanApplicationRepositoryDao {
+public class DecisionOnLoanApplicationRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired

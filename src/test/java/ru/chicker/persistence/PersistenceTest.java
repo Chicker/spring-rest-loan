@@ -11,10 +11,10 @@ import ru.chicker.configs.PersistenceConfig;
 import ru.chicker.configs.ServiceConfig;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestDataSourceConfig;
-import ru.chicker.entities.dao.LoanApplicationDao;
+import ru.chicker.models.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
-import ru.chicker.repositories.DecisionOnLoanApplicationRepositoryDao;
-import ru.chicker.repositories.LoanApplicationRepositoryDao;
+import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
+import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.LoansService;
 
 import javax.transaction.Transactional;
@@ -35,16 +35,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class PersistenceTest {
     
     @Autowired
-    private LoanApplicationRepositoryDao loansRepo;
+    private LoanApplicationRepository loansRepo;
 
     @Autowired
-    private DecisionOnLoanApplicationRepositoryDao decisionsRepo;
+    private DecisionOnLoanApplicationRepository decisionsRepo;
 
     @Autowired
     private LoansService loansService;
     
     @Autowired
-    private LoanApplicationRepositoryDao loansRepoNew;
+    private LoanApplicationRepository loansRepoNew;
     
     @Test
     public void test1() throws Exception {

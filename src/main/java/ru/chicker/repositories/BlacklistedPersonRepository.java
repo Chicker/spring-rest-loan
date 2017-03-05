@@ -3,13 +3,13 @@ package ru.chicker.repositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.chicker.entities.dao.BlacklistedPersonDao;
+import ru.chicker.models.dao.BlacklistedPersonDao;
 import ru.chicker.utils.JdbcTemplateUtils;
 
 import javax.sql.DataSource;
 
 @Repository
-public class BlacklistedPersonRepositoryDao {
+public class BlacklistedPersonRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired

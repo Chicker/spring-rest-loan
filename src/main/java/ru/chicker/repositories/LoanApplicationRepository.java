@@ -3,14 +3,14 @@ package ru.chicker.repositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.chicker.entities.dao.LoanApplicationDao;
+import ru.chicker.models.dao.LoanApplicationDao;
 import ru.chicker.utils.JdbcTemplateUtils;
 
 import javax.sql.DataSource;
 import java.util.List;
 
 @Repository
-public class LoanApplicationRepositoryDao {
+public class LoanApplicationRepository {
 
     private JdbcTemplate jdbcTemplate;
 
