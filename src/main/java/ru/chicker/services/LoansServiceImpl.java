@@ -1,18 +1,20 @@
 package ru.chicker.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.chicker.entities.LimitOfRequests;
 import ru.chicker.entities.dao.LimitOfRequestsDao;
 import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
-import ru.chicker.repositories.*;
+import ru.chicker.repositories.BlacklistedPersonRepositoryDao;
+import ru.chicker.repositories.DecisionOnLoanApplicationRepositoryDao;
+import ru.chicker.repositories.LimitOfRequestsRepositoryDao;
+import ru.chicker.repositories.LoanApplicationRepositoryDao;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class LoansServiceImpl implements LoansService {
     @Autowired
-    private BlacklistedPersonRepository blacklistedPersonRepository;
+    private BlacklistedPersonRepositoryDao blacklistedPersonRepository;
 
     @Autowired
     private LimitOfRequestsRepositoryDao limitOfRequestsRepository;

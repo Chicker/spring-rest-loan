@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.chicker.entities.LoanApplication;
 import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.BlockedPersonalIdException;
 import ru.chicker.exceptions.LimitOfRequestsExceededException;

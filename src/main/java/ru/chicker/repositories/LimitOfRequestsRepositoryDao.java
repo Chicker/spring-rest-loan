@@ -3,7 +3,6 @@ package ru.chicker.repositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.chicker.entities.LimitOfRequests;
 import ru.chicker.entities.dao.LimitOfRequestsDao;
 import ru.chicker.utils.JdbcTemplateUtils;
 

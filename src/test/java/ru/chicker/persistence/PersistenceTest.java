@@ -11,14 +11,11 @@ import ru.chicker.configs.PersistenceConfig;
 import ru.chicker.configs.ServiceConfig;
 import ru.chicker.configs.TestAppConfig;
 import ru.chicker.configs.TestDataSourceConfig;
-import ru.chicker.entities.Person;
 import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.DecisionOnLoanApplicationRepositoryDao;
 import ru.chicker.repositories.LoanApplicationRepositoryDao;
-import ru.chicker.repositories.PersonRepository;
 import ru.chicker.services.LoansService;
-import ru.chicker.utils.CollectionUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -36,10 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @Transactional
 @Rollback
 public class PersistenceTest {
-
-    @Autowired
-    PersonRepository personRepository;
-
+    
     @Autowired
     private LoanApplicationRepositoryDao loansRepo;
 
@@ -51,20 +45,6 @@ public class PersistenceTest {
     
     @Autowired
     private LoanApplicationRepositoryDao loansRepoNew;
-
-    //    @Test
-    public void testSave() throws Exception {
-        Person person1 = new Person("Katy", "Jhonson");
-        Person person2 = new Person("Elena", "Markova");
-
-        personRepository.save(person1);
-        personRepository.save(person2);
-
-        // The size should be 4, because the table "Persons" already contains 2 
-        // persons initially
-        assertThat(CollectionUtils.sizeOfIterable(personRepository.findAll())
-            , is(4));
-    }
     
     @Test
     public void test1() throws Exception {

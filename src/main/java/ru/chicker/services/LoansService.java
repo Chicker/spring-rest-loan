@@ -1,6 +1,5 @@
 package ru.chicker.services;
 
-import ru.chicker.entities.LimitOfRequests;
 import ru.chicker.entities.dao.LimitOfRequestsDao;
 import ru.chicker.entities.dao.LoanApplicationDao;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
