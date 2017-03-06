@@ -12,7 +12,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ru.chicker.repositories.MyRepositoryImpl;
+import ru.chicker.repositories.BaseRepositoryImpl;
 
 
 import javax.persistence.EntityManagerFactory;
@@ -23,7 +23,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(value = "ru.chicker.repositories",
-    repositoryBaseClass = MyRepositoryImpl.class)
+    repositoryBaseClass = BaseRepositoryImpl.class)
 @PropertySource("classpath:application.properties")
 public class PersistenceConfig {
     

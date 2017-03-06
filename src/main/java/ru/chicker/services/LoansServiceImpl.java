@@ -113,4 +113,10 @@ public class LoansServiceImpl implements LoansService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteLoanApplication(LoanApplication loanApplication) {
+        loansRepo.delete(loanApplication);
+        loansRepo.flush();
+    }
 }

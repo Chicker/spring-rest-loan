@@ -37,4 +37,5 @@ CREATE TABLE DecisionsOnLoanApplication (
   fk_loan_application int NOT NULL UNIQUE,
   PRIMARY KEY (id));
 ALTER TABLE DecisionsOnLoanApplication ADD CONSTRAINT FKDecisionsO608553
-FOREIGN KEY (fk_loan_application) REFERENCES LoanApplications (id);
+  FOREIGN KEY (fk_loan_application) REFERENCES LoanApplications (id)
+  ON DELETE CASCADE;

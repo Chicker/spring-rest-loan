@@ -23,8 +23,7 @@ import ru.chicker.repositories.LoanApplicationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,6 +37,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @Transactional
 @Rollback
 public class LoansServiceImplTest {
+    private static final String PERSONAL_ID_POPPINS = "12345678sq";
 
     @Autowired
     private LoansService loansService;
@@ -125,10 +125,9 @@ public class LoansServiceImplTest {
 
         loansService.resolveLoanApplication(loanApplication, true);
 
-        DecisionOnLoanApplication approvedLoan = decisionsRepository.findByLoanApplication(loanApplication);
+        assertThat(loanApplication.getDecision(), is(notNullValue()));
+        assertThat(loanApplication.getDecision().getApprovedAsBool(), is(true));
 
-        assertThat(approvedLoan, is(notNullValue()));
-        assertThat(approvedLoan.getApproved(), is(1));
     }
 
     @Test(expected = LoanApplicationHasBeenResolvedException.class)
@@ -162,15 +161,32 @@ public class LoansServiceImplTest {
         // prepare test data
         // N\ow we will approve 3 loans and after this we will test them 
         for (LoanApplication loan : loansClient1) {
-            loansService.resolveLoanApplication(loan,true);
+            loansService.resolveLoanApplication(loan, true);
         }
 
         for (LoanApplication loan : loansClient2) {
-            loansService.resolveLoanApplication(loan,true);
+            loansService.resolveLoanApplication(loan, true);
         }
-        
+
         List<LoanApplication> approvedLoans = loansService.getLoansByApproved(true);
 
         assertThat(approvedLoans.size(), is(3));
+    }
+
+    @Test
+    public void when_loan_app_is_deleted_the_decision_should_be_deleted_also() throws Exception {
+
+        LoanApplication marryLoan = loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(PERSONAL_ID_POPPINS);
+        assertThat(marryLoan, is(notNullValue()));
+
+        loansService.resolveLoanApplication(marryLoan, true);
+
+        DecisionOnLoanApplication approvedDecision = decisionsRepository.findByLoanApplication(marryLoan);
+        assertThat(approvedDecision, is(notNullValue()));
+
+        loansService.deleteLoanApplication(marryLoan);
+
+        DecisionOnLoanApplication decision2 = decisionsRepository.findByLoanApplication(marryLoan);
+        assertThat(decision2, is(nullValue()));
     }
 }

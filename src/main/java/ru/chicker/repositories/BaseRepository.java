@@ -7,6 +7,6 @@ import javax.persistence.EntityManager;
 import java.io.Serializable;
 
 @NoRepositoryBean
-public interface MyRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
+public interface BaseRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
     EntityManager getEntityManager();
 }

@@ -8,7 +8,7 @@ import ru.chicker.entities.LoanApplication;
 import java.util.List;
 
 @Repository
-public interface LoanApplicationRepository extends MyRepository<LoanApplication, Long> {
+public interface LoanApplicationRepository extends BaseRepository<LoanApplication, Long> {
     /**
      * Use this only for testing purpose, because it uses the assumption about the order of ids
      * records

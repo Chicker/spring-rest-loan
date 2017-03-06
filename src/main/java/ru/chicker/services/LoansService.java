@@ -28,4 +28,5 @@ public interface LoansService {
     List<LoanApplication> getLoansByApproved(boolean approved);
 
     List<LoanApplication> getLoansByClient(String personalId, boolean approved);
+    void deleteLoanApplication(LoanApplication loanApplication);
 }
