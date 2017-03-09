@@ -7,6 +7,7 @@ def jacksonVersion = '2.7.0'
 def jsonPathVersion = '2.2.0'
 def springFrameworkVersion = '4.3.6.RELEASE'
 def springBootStarterVersion = '1.5.1.RELEASE'
+def hibernateVersion = '5.2.8.Final'
 def rxJavaVersion = '2.0.+'
 
 def jUnitVersion = '4.12'
@@ -29,8 +30,9 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.springframework', name: 'spring-webmvc',
-            version: springFrameworkVersion
+    compile group:"org.springframework.boot",
+            name:"spring-boot-starter-web",
+            version: springBootStarterVersion
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind',
             version: jacksonVersion
     compile group: 'com.jayway.jsonpath', name: 'json-path',
@@ -40,14 +42,13 @@ dependencies {
             name:"spring-boot-starter-data-jpa",
             version: springBootStarterVersion
     compile group: 'com.h2database', name: 'h2', version: '1.4.193'
-    compile group: 'org.hibernate', name: 'hibernate-validator', version: '5.3.4.Final'
     compile group: "org.apache.httpcomponents", name: 'httpclient', version:
             '4.5.2'
     compile group: 'io.javaslang', name: 'javaslang', version: '2.0.5'
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxJavaVersion
-//    compile group: 'javax.el', name: 'javax.el-api', version: '2.2.5'
-    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.8.Final'
-
+    compile group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion
+    compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: hibernateVersion
+    
     testCompile group: 'junit', name: 'junit',
             version: jUnitVersion
     testCompile group: 'org.hamcrest', name:'hamcrest-library',

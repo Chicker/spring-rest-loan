@@ -87,8 +87,6 @@ public class LoansServiceImpl implements LoansService {
             approveInt, loanApplication);
 
         decisionsRepo.save(decision);
-        // Once new child entity has been created, the parent entity should be refreshed
-        decisionsRepo.getEntityManager().refresh(loanApplication);
     }
 
     @Override
@@ -117,6 +115,5 @@ public class LoansServiceImpl implements LoansService {
     @Override
     public void deleteLoanApplication(LoanApplication loanApplication) {
         loansRepo.delete(loanApplication);
-        loansRepo.flush();
     }
 }

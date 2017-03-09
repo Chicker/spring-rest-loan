@@ -70,12 +70,14 @@ public class LoansControllerIntegrationTest {
         assertThat(maryLoans.size(), is(1));
         for (LoanApplication loan : maryLoans) {
             loansService.resolveLoanApplication(loan, true);
+            loanApplicationRepository.getEntityManager().refresh(loan);
         }
 
         // decline all loans created by Robert Nikelson
         assertThat(nikelsonLoans.size(), is(2));
         for (LoanApplication loan : nikelsonLoans) {
             loansService.resolveLoanApplication(loan, false);
+            loanApplicationRepository.getEntityManager().refresh(loan);
         }
     }
 

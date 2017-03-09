@@ -115,18 +115,20 @@ public class LoansServiceImplTest {
     @Test
     public void test_accept_loan_application() throws Exception {
         String personalId = "123456";
-        List<LoanApplication> loanApplicationList = loanApplicationRepository.findByPersonalId(personalId);
 
-        // Peter Rodriges (personal id is equal 123456) created 2 applications.
-        assertThat(loanApplicationList.size(), is(2));
-
-        LoanApplication loanApplication =
+        LoanApplication rodrigesLoan =
             loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(personalId);
 
-        loansService.resolveLoanApplication(loanApplication, true);
+        loansService.resolveLoanApplication(rodrigesLoan, true);
 
-        assertThat(loanApplication.getDecision(), is(notNullValue()));
-        assertThat(loanApplication.getDecision().getApprovedAsBool(), is(true));
+        loanApplicationRepository.getEntityManager().refresh(rodrigesLoan);
+
+        // it is not necessary because we flushed changes above
+//        LoanApplication updatedRodriges =
+//            loanApplicationRepository.findFirst1ByPersonalIdOrderByIdDesc(rodrigesLoan.getPersonalId());
+
+        assertThat(rodrigesLoan.getDecision(), is(notNullValue()));
+        assertThat(rodrigesLoan.getDecision().getApprovedAsBool(), is(true));
 
     }
 
@@ -185,6 +187,9 @@ public class LoansServiceImplTest {
         assertThat(approvedDecision, is(notNullValue()));
 
         loansService.deleteLoanApplication(marryLoan);
+
+        // flush is necessary, because only after this, entity will be deleted.
+        loanApplicationRepository.flush();
 
         DecisionOnLoanApplication decision2 = decisionsRepository.findByLoanApplication(marryLoan);
         assertThat(decision2, is(nullValue()));
