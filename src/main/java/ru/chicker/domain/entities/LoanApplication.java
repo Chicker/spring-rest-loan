@@ -1,7 +1,7 @@
-package ru.chicker.entities;
+package ru.chicker.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ru.chicker.models.dto.ApplicationLoanDto;
+import ru.chicker.domain.dto.ApplicationLoanDto;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

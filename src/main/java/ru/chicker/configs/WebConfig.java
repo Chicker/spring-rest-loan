@@ -11,7 +11,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @Import({DataSourceConfig.class, PersistenceConfig.class, InfoByIpServicesConfig.class,
     ServiceConfig.class})
-@ComponentScan(basePackages = "ru.chicker.controllers")
+@ComponentScan(basePackages = "ru.chicker.web.controllers")
 @EnableWebMvc
 public class WebConfig {
     

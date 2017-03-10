@@ -39,7 +39,7 @@ public class PersistenceConfig {
         emf.setDataSource(ds);
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         
-        emf.setPackagesToScan("ru.chicker.entities");
+        emf.setPackagesToScan("ru.chicker.domain.entities");
 
         Properties jpaProperties = new Properties();
 

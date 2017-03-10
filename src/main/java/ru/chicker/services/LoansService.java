@@ -1,7 +1,7 @@
 package ru.chicker.services;
 
-import ru.chicker.entities.LimitOfRequests;
-import ru.chicker.entities.LoanApplication;
+import ru.chicker.domain.entities.LimitOfRequests;
+import ru.chicker.domain.entities.LoanApplication;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 
 import java.time.LocalDateTime;

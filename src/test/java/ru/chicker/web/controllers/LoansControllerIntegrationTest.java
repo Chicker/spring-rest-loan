@@ -1,4 +1,4 @@
-package ru.chicker.controllers;
+package ru.chicker.web.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import ru.chicker.configs.ServiceConfig;
 import ru.chicker.configs.TestAppConfig;
-import ru.chicker.entities.DecisionOnLoanApplication;
-import ru.chicker.entities.LoanApplication;
+import ru.chicker.domain.entities.DecisionOnLoanApplication;
+import ru.chicker.domain.entities.LoanApplication;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.DecisionOnLoanApplicationRepository;
 import ru.chicker.repositories.LoanApplicationRepository;

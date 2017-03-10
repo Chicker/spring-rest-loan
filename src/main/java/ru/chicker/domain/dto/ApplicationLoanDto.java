@@ -1,4 +1,4 @@
-package ru.chicker.models.dto;
+package ru.chicker.domain.dto;
 
 import org.hibernate.validator.constraints.NotEmpty;
 

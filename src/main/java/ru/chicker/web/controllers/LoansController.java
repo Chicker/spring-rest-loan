@@ -1,16 +1,16 @@
-package ru.chicker.controllers;
+package ru.chicker.web.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.chicker.entities.LoanApplication;
+import ru.chicker.domain.entities.LoanApplication;
 import ru.chicker.exceptions.BlockedPersonalIdException;
 import ru.chicker.exceptions.LimitOfRequestsExceededException;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.exceptions.LoanApplicationNotFound;
-import ru.chicker.models.dto.ApplicationLoanDto;
+import ru.chicker.domain.dto.ApplicationLoanDto;
 import ru.chicker.repositories.LoanApplicationRepository;
 import ru.chicker.services.LoansService;
 import ru.chicker.services.InfoByIpService;

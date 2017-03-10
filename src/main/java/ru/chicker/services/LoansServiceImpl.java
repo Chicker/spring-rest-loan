@@ -1,9 +1,9 @@
 package ru.chicker.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.chicker.entities.DecisionOnLoanApplication;
-import ru.chicker.entities.LimitOfRequests;
-import ru.chicker.entities.LoanApplication;
+import ru.chicker.domain.entities.DecisionOnLoanApplication;
+import ru.chicker.domain.entities.LimitOfRequests;
+import ru.chicker.domain.entities.LoanApplication;
 import ru.chicker.exceptions.LoanApplicationHasBeenResolvedException;
 import ru.chicker.repositories.BlacklistedPersonRepository;
 import ru.chicker.repositories.DecisionOnLoanApplicationRepository;

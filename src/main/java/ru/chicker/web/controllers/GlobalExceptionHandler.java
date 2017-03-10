@@ -1,4 +1,4 @@
-package ru.chicker.controllers;
+package ru.chicker.web.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,6 @@ import ru.chicker.utils.ExceptionHandlersUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 

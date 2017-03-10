@@ -1,7 +1,7 @@
 package ru.chicker.repositories;
 
 import org.springframework.data.repository.CrudRepository;
-import ru.chicker.entities.LimitOfRequests;
+import ru.chicker.domain.entities.LimitOfRequests;
 
 import java.time.LocalDateTime;
 

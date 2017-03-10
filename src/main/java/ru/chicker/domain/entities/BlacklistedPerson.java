@@ -1,4 +1,4 @@
-package ru.chicker.entities;
+package ru.chicker.domain.entities;
 
 import javax.persistence.*;
 
