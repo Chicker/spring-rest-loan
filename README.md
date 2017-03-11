@@ -11,6 +11,8 @@ The service is divided in several layers:
   * Data Access Layer (Spring Data JPA, Hibernate as ORM)
   * Database system (H2 was used for testing, and MySql or Postgres may be used in production) 
 
+The documentation for REST API can be find [here](https://github.com/Chicker/spring-rest-loan/wiki/REST-API-Doc).
+
 ## Development
 
 This is a gradle-based project.
